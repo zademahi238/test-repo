@@ -1,0 +1,12 @@
+title: Mission Mimosa Blog
+description: Technical blogs on robot learning and tactile sensing
+
+url: "https://zademahi238.github.io"
+baseurl: "/test-repo"
+
+markdown: kramdown
+
+theme: jekyll-dash
+
+plugins:
+  - jekyll-feed
