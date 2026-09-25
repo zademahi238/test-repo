@@ -55,17 +55,17 @@ To make the robot truly contact-aware, we fuse these distinct visual and tactile
 
 This unified visuo-tactile data then serves as the conditioning input for advanced action generation architectures, including Diffusion, ACT, and SmolVLA.
 
-## FlexiTac: Sensing Through Flexible Circuits
+## **FlexiTac: Sensing Through Flexible Circuits**
 
-Flexitac is a low-cost, three layer (FPC-Velostat-FPC) tactile sensor which is based on the principle of piezoresistance. It consists of a readout board made out of simple electronic components communicating with the host PC at 100Hz.
+Flexitac is a low-cost, three layer (**FPC-Velostat-FPC**) tactile sensor which is based on the principle of **piezoresistance**. It consists of a readout board made out of simple electronic components communicating with the host PC at 100Hz.
 
-It consists of two FPC with vertical and horizontal alignment of electrodes each. Velostat(a piezoresistive material)is sandwiched between these two FPC’s which results in a 16x32 matrix whose elements are known as taxels. When pressure is applied to the sensor, the Velostat's resistance changes at the point of contact. Each of the 512 taxels is mapped to its (row, column) position in the matrix, so every taxel holds its own pressure value. However, the current Flexitac supports a 12x32 matrix. Together, these values form a complete pressure image known as the heatmap.
+It consists of two FPC with vertical and horizontal alignment of electrodes each. Velostat(a piezoresistive material)is sandwiched between these two FPC’s which results in a **16x32 matrix** whose elements are known as **taxels**. When pressure is applied to the sensor, the Velostat's resistance changes at the point of contact. Each of the **512 taxels** is mapped to its (row, column) position in the matrix, so every taxel holds its own pressure value. However, the current Flexitac supports a 12x32 matrix. Together, these values form a complete pressure image known as the **heatmap.**
 
-The heatmap converts the 12x32 tactile array of raw taxels into a 2D pressure image. Each of the 512 taxels is displayed as a taxel at its position in the tactile array. Also the colour gradient shows how hard that particular region is pressed.
+The heatmap converts the 12x32 tactile array of raw taxels into a **2D pressure image.** Each of the **512 taxels** is displayed as a taxel at its position in the tactile array. Also the colour gradient shows how hard that particular region is pressed.
 
 The footprint of any object appears as a 2D image on the visualizer so you can predict the shape and size of the grasped object. Also the mapping keeps updating simultaneously so that we can track the changing contacts live.
 
-### Mapping Taxels into a Tactile Map
+### **Mapping Taxels into a Tactile Map**
 
 <img src="{{ '/assets/posts/beyond-vision/tactile.png' | relative_url }}" alt="FlexiTac Tactile Heatmap and Sensor">
 
@@ -74,7 +74,7 @@ The footprint of any object appears as a 2D image on the visualizer so you can p
 When the sensor is pressed, the applied force is distributed across individual taxels. For a taxel at row $i$ and column $j$, the resulting pressure depends on how much force is applied and the area over which it acts:
 
 $$
-P_{ij} = \frac{F_{ij}}{A_{ij}}
+\mathbf{P_{ij} = \frac{F_{ij}}{A_{ij}}}
 $$
 
 where $P_{ij}$ is the resulting pressure, $F_{ij}$ is the applied normal force, and $A_{ij}$ is the effective contact area of the taxel.
@@ -82,7 +82,7 @@ where $P_{ij}$ is the resulting pressure, $F_{ij}$ is the applied normal force, 
 This pressure changes the microscopic contact between the conductive material and the electrode. For an ideal contact, the conductance scales linearly:
 
 $$
-C_x = k_x P_x
+\mathbf{C_x = k_x P_x}
 $$
 
 Here, $C_x$ is the contact conductance, $P_x$ the applied pressure, and $k_x$ the contact sensitivity constant. As pressure increases, conductance increases and resistance decreases, since:
@@ -94,31 +94,31 @@ $$
 However, for real FlexiTac-like sensors, contact mechanics result in a nonlinear, sublinear response:
 
 $$
-C_x = k_x P_x^m
+\mathbf{C_x = k_x P_x^m}
 $$
 
-$m$ is the nonlinearity exponent. For real sensors, $m<1$ at lower loads, causing the response to curve rather than remain perfectly linear.
+$m$ is the nonlinearity exponent. For real sensors, $\mathbf{m<1}$ at lower loads, causing the response to curve rather than remain perfectly linear.
 
 ### Electrical Readout
 
 The total electrical resistance of a single taxel is modeled as multiple paths working together:
 
 $$
-R_{taxel} = R_{in} + R_{out} + R_{gap}
+\mathbf{R_{taxel} = R_{in} + R_{out} + R_{gap}}
 $$
 
-where $R_{gap}$ is the internal resistance of the conductive piezoresistive material bridging the gap between the electrodes.
+where **$R_{gap}$** is the internal resistance of the conductive piezoresistive material bridging the gap between the electrodes.
 
 This physical resistance is read by an external electrical circuit and converted into a readable voltage:
 
 $$
-V_{out} = \frac{R_{gain}}{R_{taxel}} V_{bias}
+\mathbf{V_{out} = \frac{R_{gain}}{R_{taxel}} V_{bias}}
 $$
 
 For a full 12x32 FlexiTac array, a microcontroller’s ADC digitizes this output for every taxel:
 
 $$
-V_{ij} = \frac{D_{ij}}{D_{max}} V_{ref}
+\mathbf{V_{ij} = \frac{D_{ij}}{D_{max}} V_{ref}}
 $$
 
 Here, $D_{ij}$ is the raw ADC reading, $D_{max}$ the ADC’s maximum digital value, and $V_{ref}$ the reference voltage used to convert the reading into an actual voltage.
@@ -126,7 +126,7 @@ Here, $D_{ij}$ is the raw ADC reading, $D_{max}$ the ADC’s maximum digital val
 And this electrical reading is converted into estimated force using the relation:
 
 $$
-F_{ij} = \left(\frac{V_{ij}}{K}\right)^{1/m}
+\mathbf{F_{ij} = \left(\frac{V_{ij}}{K}\right)^{1/m}}
 $$
 
 ### Tactile Data Representation
@@ -134,7 +134,7 @@ $$
 For representing pressure using heatmap the matrix is normalized in the range [0,1]:
 
 $$
-H_{ij} = \operatorname{clip}\left(\frac{F_{ij}-F_{min}}{F_{max}-F_{min}},0,1\right)
+\mathbf{H_{ij} = \operatorname{clip}\left(\frac{F_{ij}-F_{min}}{F_{max}-F_{min}},0,1\right)}
 $$
 
 $H_{ij}$ is the normalized heatmap value, and $F_{min}/F_{max}$ are the minimum and maximum expected force values.
@@ -142,19 +142,19 @@ $H_{ij}$ is the normalized heatmap value, and $F_{min}/F_{max}$ are the minimum 
 This normalized values are then represented as a gradient on the heatmap using the colormap:
 
 $$
-RGB_{ij} = C(H_{ij})
+\mathbf{RGB_{ij} = C(H_{ij})}
 $$
 
-Integration of Tactile Sensor in Manipulation Policies :
+**Integration of Tactile Sensor in Manipulation Policies :**
 
-ACT:
+**ACT:**
 
 <img src="{{ '/assets/posts/beyond-vision/ACT.png' | relative_url }}" alt="ACT architecture">
 
 To use tactile data for robot learning, the robot combines it with visual and joint-position information. Since ACT cannot directly process the 2D heatmap, a Tactile Encoder (CNN or MLP) converts it into a compact feature representation that ACT can use.
 
 $$
-T_{tactile}=Encoder_{tactile}(H)
+\mathbf{T_{tactile}=Encoder_{tactile}(H)}
 $$
 
 where $T_{tactile}$ are tactile tokens which represent the extracted tactile information.
@@ -162,16 +162,16 @@ where $T_{tactile}$ are tactile tokens which represent the extracted tactile inf
 Finally, the robot combines these tactile tokens with its other sensor data into a single flat sequence. This multimodal sequence is what gets fed into the Transformer policy to predict the robot's next movements:
 
 $$
-X_{input} = [z, T_{state}, T_{tactile,1...N}, T_{img,1...M}]
+\mathbf{X_{input} = [z, T_{state}, T_{tactile,1...N}, T_{img,1...M}]}
 $$
 
 where $X_{input}$ is the combined multimodal sequence, $T_{img}$ is the image feature token, $T_{state}$ is the proprioceptive token, and $z$ is the latent token representing variation during training.
 
-SMOLVLA:
+**SMOLVLA:**
 
 <img src="{{ '/assets/posts/beyond-vision/SmolVLA.png' | relative_url }}" alt="SmolVLA architecture">
 
-Phase 1: Integrating the Senses
+**Phase 1: Integrating the Senses**
 
 Before a robot can move, it must translate physical sensations into a mathematical language the Vision-Language Model (VLM) understands.
 
@@ -273,7 +273,7 @@ $$
 
 This combined representation acts as the policy's multimodal observation, containing information about what the robot sees, feels, and its current state. It is then passed through conditioning layers to generate parameters that modulate the action-generation network, allowing the tactile information to influence its intermediate features.
 
-Instead of directly predicting the action trajectory, Diffusion Policy learns to denoise it. Noise is added to the original action $x_0$:
+Instead of directly predicting the action trajectory, Diffusion Policy learns to **denoise** it. Noise is added to the original action $x_0$:
 
 $$
 x_t=\sqrt{\bar{\alpha}_t}x_0+\sqrt{1-\bar{\alpha}_t}\epsilon,\qquad \epsilon\sim\mathcal{N}(0,I)
@@ -293,7 +293,7 @@ Here’s the contact-rich benchmark task used to compare vision-only and visuo-t
 
 <img src="{{ '/assets/posts/beyond-vision/rollout.gif' | relative_url }}" alt="Vision-only vs. visuo-tactile rollout">
 
-<img src="{{ '/assets/posts/beyond-vision/success-rate.png' | relative_url }}" alt="Success rate comparison">
+<img src="{{ '/assets/posts/beyond-vision/success%20rate.png' | relative_url }}" alt="Success rate comparison">
 
 ## References
 
