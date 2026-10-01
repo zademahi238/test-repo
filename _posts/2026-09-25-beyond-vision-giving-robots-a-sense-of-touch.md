@@ -307,6 +307,7 @@ Here’s the contact-rich benchmark task used to compare vision-only and visuo-t
 
 5. Leflexitac: Integration of tactile sensors — [LeFlexiTac](https://github.com/LeFlexiTac)
 
-Thank You Runpod <img src="{{ '/assets/posts/beyond-vision/runpod-icon-transparent.png' | relative_url }}" alt="Runpod">
+Thank You Runpod 
+<img src="{{ '/assets/posts/beyond-vision/runpod-icon-transparent-small.png' | relative_url }}" alt="Runpod">
 
 **Project Website:** [Mission Mimosa](https://zademahi238.github.io/mission-mimosa/#/)
